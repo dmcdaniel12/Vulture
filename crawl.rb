@@ -1,25 +1,20 @@
+#!/usr/bin/ruby
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
-require 'open-uri'
 require 'openssl'
+require 'win32ole'
+require './lib/email'
 
 
-BASE_WIKIPEDIA_URL = "https://en.wikipedia.org"
-LIST_URL = "#{BASE_WIKIPEDIA_URL}/wiki/List_of_Nobel_laureates"
+BASE_URL = "http://www.rods.com"
+LIST_URL = "#{BASE_URL}"
 
 page = Nokogiri::HTML(open(LIST_URL, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
-rows = page.css('div.mw-content-ltr table.wikitable tr')
+menu = page.css('div#menu-1')
 
-rows[1..-2].each do |row|
-
-  hrefs = row.css("td a").map{ |a|
-    a['href'] if a['href'] =~ /^\/wiki\//
-  }.compact.uniq
-
-  hrefs.each do |href|
-    remote_url = BASE_WIKIPEDIA_URL + href
-    puts remote_url
-  end # done: hrefs.each
-
-end # done: rows.each
+if menu.nil? || menu.empty?
+  put "Rod's Website is down!"
+  vemail = Email.new
+  vemail.sendMail()
+end
