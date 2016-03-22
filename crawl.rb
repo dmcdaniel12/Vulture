@@ -1,11 +1,14 @@
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
+require 'open-uri'
+require 'openssl'
 
-BASE_WIKIPEDIA_URL = "http://en.wikipedia.org"
+
+BASE_WIKIPEDIA_URL = "https://en.wikipedia.org"
 LIST_URL = "#{BASE_WIKIPEDIA_URL}/wiki/List_of_Nobel_laureates"
 
-page = Nokogiri::HTML(open(LIST_URL))
+page = Nokogiri::HTML(open(LIST_URL, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
 rows = page.css('div.mw-content-ltr table.wikitable tr')
 
 rows[1..-2].each do |row|
